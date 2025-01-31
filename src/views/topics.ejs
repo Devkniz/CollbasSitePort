@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topics</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card h2 {
+            margin-top: 0;
+        }
+        .card p {
+            margin: 8px 0;
+        }
+        .card .meta {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .card .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .card .respond {
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container">
+        <h1>Topics Page</h1>
+        <div class="card">
+            <h2>Create a New Topic</h2>
+            <form action="/topics/create" method="POST">
+                <div>
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div>
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+                <button type="submit">Create Topic</button>
+            </form>
+        </div>
+        <% topics.forEach(topic => { %>
+            <div class="card">
+                <div class="respond">
+                    <h2><%= topic.title %></h2>
+                    <p class="meta">Created by <%= topic.user_id %> on <%= new Date(topic.created_at).toLocaleDateString() %></p>
+                    <p><%= topic.description %></p>
+                    <p class="meta">Responses: <%= topic.responses_count %></p>
+                    <form action="/topics/respond/<%= topic.id %>" method="POST">
+                        <textarea name="response" placeholder="Type your response here..." required></textarea>
+                        <button type="submit">Respond</button>
+                    </form>
+                </div>
+                <% if (topic.user_id === userId) { %>
+                    <div class="actions">
+                        <a href="/topics/edit/<%= topic.id %>">Edit</a>
+                        <form action="/topics/delete/<%= topic.id %>" method="POST" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>
